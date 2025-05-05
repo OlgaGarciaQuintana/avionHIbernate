@@ -1,5 +1,7 @@
 package com.avion.model;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,19 +27,29 @@ public class Avion {
 	@Column(name="destino")
 	String destino;
 	
-	@Column(name="mostrador")
-	String mostrador;
+	@Column(name="mostrador1")
+	int mostrador1;
+	
+	@Column(name="mostrador2")
+	int mostrador2;
 	
 	@Column(name="puerta")
 	int puerta;
+	
+	@Column(name="fecha")
+	LocalDate fecha;
 
-	public Avion(String hora, String vuelo, String destino, String mostrador, int puerta) {
+	
+
+	public Avion(String hora, String vuelo, String destino, int mostrador1, int mostrador2, int puerta, LocalDate fecha) {
 		super();
 		this.hora = hora;
 		this.vuelo = vuelo;
 		this.destino = destino;
-		this.mostrador = mostrador;
+		this.mostrador1 = mostrador1;
+		this.mostrador2 = mostrador2;
 		this.puerta = puerta;
+		this.fecha = fecha;
 	}
 
 	public Avion() {
@@ -76,12 +88,20 @@ public class Avion {
 		this.destino = destino;
 	}
 
-	public String getMostrador() {
-		return mostrador;
+	public int getMostrador1() {
+		return mostrador1;
 	}
 
-	public void setMostrador(String mostrador) {
-		this.mostrador = mostrador;
+	public void setMostrador1(int mostrador1) {
+		this.mostrador1 = mostrador1;
+	}
+	
+	public int getMostrador2() {
+		return mostrador2;
+	}
+
+	public void setMostrador2(int mostrador2) {
+		this.mostrador2 = mostrador2;
 	}
 
 	public int getPuerta() {
@@ -92,6 +112,12 @@ public class Avion {
 		this.puerta = puerta;
 	}
 	
-	
+	public LocalDate getFecha() {
+		return fecha;
+	}
+
+	public void setFecha(LocalDate fecha) {
+		this.fecha = fecha;
+	}
 
 }

@@ -3,7 +3,9 @@ package com.avion.gui;
 import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.JFrame;
 import java.awt.Color;
@@ -16,7 +18,8 @@ import javax.swing.table.TableModel;
 
 import com.avion.dao.AvionDAO;
 import com.avion.model.Avion;
-
+import com.github.lgooddatepicker.components.DatePicker;
+import com.github.lgooddatepicker.components.DatePickerSettings;
 
 import javax.swing.JButton;
 
@@ -29,6 +32,9 @@ public class App {
 	private JTextField textFieldDestino;
 	private JTextField textFieldMostrador;
 	private JTextField textFieldPuerta;
+	private JTextField textFieldMostrador1;
+	private JTextField textFieldMostrador2;
+	private DatePicker datePicker;
 
 	/**
 	 * Launch the application.
@@ -74,6 +80,7 @@ public class App {
 		model.addColumn("Destino");
 		model.addColumn("Mostrador");
 		model.addColumn("Puerta");
+		model.addColumn("Fecha");
 
 		//Para que se vea bonito:
 		JTable table = new JTable(model);
@@ -88,8 +95,13 @@ public class App {
 				textFieldHora.setText(model.getValueAt(index, 1).toString());
 				textFieldVuelo.setText(model.getValueAt(index, 2).toString());
 				textFieldDestino.setText(model.getValueAt(index, 3).toString());
-				textFieldMostrador.setText(model.getValueAt(index, 4).toString());
+				String mostradores = model.getValueAt(index, 4).toString(); // columna única con "5-6"
+				String[] partes = mostradores.split("-");
+				textFieldMostrador1.setText(partes[0]);
+				textFieldMostrador2.setText(partes.length > 1 ? partes[1] : "");
 				textFieldPuerta.setText(model.getValueAt(index, 5).toString());
+				Object fecha = model.getValueAt(index, 6);
+				datePicker.setDate(LocalDate.parse(fecha.toString()));
 				
 			}
 		});
@@ -97,14 +109,15 @@ public class App {
 		
 		//Incluir a la tabla un panel con barra de scroll:
 		JScrollPane scrollPane = new JScrollPane(table);
-		scrollPane.setBounds(31, 42, 263, 130);
+		scrollPane.setBounds(32, 30, 561, 130);
 		
 		//Mostrar el JScrollPane:
 		frame.getContentPane().add(scrollPane);
 		
 		//Cargar los datos de la tabla estudiantes:
 		for(Avion avion: aviones) {
-			Object []row= {avion.getId(), avion.getHora(), avion.getVuelo(), avion.getDestino(), avion.getMostrador(), avion.getPuerta()};
+			String mostradoresUnidos = avion.getMostrador1() + "-" + avion.getMostrador2();
+			Object []row= {avion.getId(), avion.getHora(), avion.getVuelo(), avion.getDestino(), mostradoresUnidos, avion.getPuerta(), avion.getFecha()};
 			model.addRow(row);
 		}
 		table.setModel(model);
@@ -135,49 +148,234 @@ public class App {
 		
 		textFieldId = new JTextField();
 		textFieldId.setEditable(false);
-		textFieldId.setBounds(158, 177, 200, 19);
+		textFieldId.setBounds(133, 176, 86, 20);
 		frame.getContentPane().add(textFieldId);
 		textFieldId.setColumns(10);
 		
 		textFieldHora = new JTextField();
-		textFieldHora.setBounds(158, 204, 200, 19);
+		textFieldHora.setBounds(133, 203, 86, 20);
 		frame.getContentPane().add(textFieldHora);
 		textFieldHora.setColumns(10);
 		
 		textFieldVuelo = new JTextField();
-		textFieldVuelo.setBounds(158, 231, 200, 19);
+		textFieldVuelo.setBounds(133, 230, 86, 20);
 		frame.getContentPane().add(textFieldVuelo);
 		textFieldVuelo.setColumns(10);
 		
 		textFieldDestino = new JTextField();
-		textFieldDestino.setBounds(158, 258, 200, 19);
+		textFieldDestino.setBounds(133, 257, 86, 20);
 		frame.getContentPane().add(textFieldDestino);
 		textFieldDestino.setColumns(10);
 		
-		textFieldMostrador = new JTextField();
-		textFieldMostrador.setBounds(158, 286, 200, 19);
-		frame.getContentPane().add(textFieldMostrador);
-		textFieldMostrador.setColumns(10);
+		textFieldMostrador1 = new JTextField();
+		textFieldMostrador1.setBounds(133, 285, 86, 20);
+		frame.getContentPane().add(textFieldMostrador1);
+		textFieldMostrador1.setColumns(10);
+		
+		textFieldMostrador2 = new JTextField();
+		textFieldMostrador2.setBounds(242, 285, 86, 20);
+		frame.getContentPane().add(textFieldMostrador2);
+		textFieldMostrador2.setColumns(10);
 		
 		textFieldPuerta = new JTextField();
-		textFieldPuerta.setBounds(158, 313, 200, 19);
+		textFieldPuerta.setBounds(133, 314, 86, 20);
 		frame.getContentPane().add(textFieldPuerta);
 		textFieldPuerta.setColumns(10);
 		
-		JButton btnInsertar = new JButton("Insertar");
-		btnInsertar.setBounds(430, 201, 117, 25);
-		frame.getContentPane().add(btnInsertar);
+		JLabel lbl7 = new JLabel("-");
+		lbl7.setBounds(228, 288, 14, 14);
+		frame.getContentPane().add(lbl7);
 		
-		JButton btnActualizar = new JButton("Actualizar");
-		btnActualizar.setBounds(430, 250, 117, 25);
-		frame.getContentPane().add(btnActualizar);
+		JLabel lbl8 = new JLabel("Fecha:");
+		lbl8.setBounds(53, 344, 46, 14);
+		frame.getContentPane().add(lbl8);
 		
-		JButton btnBorrar = new JButton("Borrar");
-		btnBorrar.setBounds(430, 299, 117, 25);
-		frame.getContentPane().add(btnBorrar);
 		frame.setBounds(100, 100, 643, 440);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		DatePickerSettings settings = new DatePickerSettings();
+        settings.setLocale(Locale.getDefault());
+        datePicker = new DatePicker(settings);
+        datePicker.getComponentDateTextField().setEditable(false);
+        datePicker.setBounds(133, 342, 185, 19);
+        settings.setFormatForDatesCommonEra("dd/MM/yyyy");
+        frame.getContentPane().add(datePicker);
+        
+        JButton btnGuardar = new JButton("Guardar");
+        btnGuardar.addMouseListener(new MouseAdapter() {
+        	@Override
+        	public void mouseClicked(MouseEvent e) {
+        		String hora;
+        		String vuelo;
+        		String destino;
+        		int mostrador1;
+        		int mostrador2;
+        		int puerta;
+        		LocalDate fecha;
+        		
+        		//recoger datos:
+        		hora=textFieldHora.getText();
+        		vuelo=textFieldVuelo.getText();
+        		destino=textFieldDestino.getText();
+				mostrador1=Integer.parseInt(textFieldMostrador1.getText());
+				mostrador2=Integer.parseInt(textFieldMostrador2.getText());
+				puerta=Integer.parseInt(textFieldPuerta.getText());
+				fecha=datePicker.getDate();
+				
+				//Crear avion:
+				Avion avion = new Avion(hora, vuelo, destino, mostrador1, mostrador2, puerta, fecha);
+				avionDAO.insertAvion(avion);
+				
+				//Borrar todo lo seleccionado:
+				textFieldId.setText("");
+				textFieldHora.setText("");
+				textFieldVuelo.setText("");
+				textFieldDestino.setText("");
+				textFieldMostrador1.setText("");
+				textFieldMostrador2.setText("");
+				textFieldPuerta.setText("");
+				datePicker.setDate(null);
+				
+				//Recargar la tabla:
+				model.setRowCount(0);
+				List<Avion> aviones = avionDAO.selectAllAvion();
+				
+				for(Avion avioncito: aviones) {
+					String mostradoresUnidos = avioncito.getMostrador1() + "-" + avioncito.getMostrador2();
+					Object []row= {
+					    avioncito.getId(),
+					    avioncito.getHora(),
+					    avioncito.getVuelo(),
+					    avioncito.getDestino(),
+					    mostradoresUnidos,
+					    avioncito.getPuerta(),
+					    avioncito.getFecha()
+					};
+					model.addRow(row);
+				}
+				table.setModel(model);
+        	}
+        });
+        btnGuardar.setBounds(425, 225, 127, 23);
+        frame.getContentPane().add(btnGuardar);
+        
+        JButton btnActualizar = new JButton("Actualizar");
+        btnActualizar.addMouseListener(new MouseAdapter() {
+        	@Override
+        	public void mouseClicked(MouseEvent e) {
+        		int id;
+        		String hora;
+        		String vuelo;
+        		String destino;
+        		int mostrador1;
+        		int mostrador2;
+        		int puerta;
+        		LocalDate fecha;
+        		
+        		//Actualizar el avion por su id y seleccionarlo:
+				id=Integer.parseInt(textFieldId.getText());
+				Avion avion = avionDAO.selectAvionById(id);
+				
+
+				//Recoge los datos nuevos puestos:
+				id=Integer.parseInt(textFieldId.getText());
+				hora=textFieldHora.getText();
+        		vuelo=textFieldVuelo.getText();
+        		destino=textFieldDestino.getText();
+				mostrador1=Integer.parseInt(textFieldMostrador1.getText());
+				mostrador2=Integer.parseInt(textFieldMostrador2.getText());
+				puerta=Integer.parseInt(textFieldPuerta.getText());
+				fecha=datePicker.getDate();
+				
+				//Pone los datos nuevos puestos solo de los datos que se actualizan:
+				avion.setHora(hora);
+				avion.setVuelo(vuelo);
+				avion.setDestino(destino);
+				avion.setMostrador1(mostrador1);
+				avion.setMostrador2(mostrador2);
+				avion.setPuerta(puerta);
+				avion.setFecha(fecha);
+				
+				//Hace la funcion de actualizar:
+				avionDAO.updateAvion(avion);
+				
+				//Borrar todo lo seleccionado:
+				textFieldId.setText("");
+				textFieldHora.setText("");
+				textFieldVuelo.setText("");
+				textFieldDestino.setText("");
+				textFieldMostrador1.setText("");
+				textFieldMostrador2.setText("");
+				textFieldPuerta.setText("");
+				datePicker.setDate(null);
+				
+				//Recargar la tabla:
+				model.setRowCount(0);
+				List<Avion> aviones = avionDAO.selectAllAvion();
+				
+				for(Avion avioncito: aviones) {
+					String mostradoresUnidos = avioncito.getMostrador1() + "-" + avioncito.getMostrador2();
+					Object []row= {
+					    avioncito.getId(),
+					    avioncito.getHora(),
+					    avioncito.getVuelo(),
+					    avioncito.getDestino(),
+					    mostradoresUnidos,
+					    avioncito.getPuerta(),
+					    avioncito.getFecha()
+					};
+					model.addRow(row);
+				}
+				table.setModel(model);
+        	}
+        });
+        btnActualizar.setBounds(425, 256, 127, 23);
+        frame.getContentPane().add(btnActualizar);
+        
+        JButton btnBorrar = new JButton("Borrar");
+        btnBorrar.addMouseListener(new MouseAdapter() {
+        	@Override
+        	public void mouseClicked(MouseEvent e) {
+        		int id;
+        		
+        		//Borra el avion por su id, lo selecciona y hace la funcion de borrarlo:
+				id=Integer.parseInt(textFieldId.getText());	
+				avionDAO.deleteAvion(id);
+				
+				//Borrar todo lo seleccionado:
+				textFieldId.setText("");
+				textFieldHora.setText("");
+				textFieldVuelo.setText("");
+				textFieldDestino.setText("");
+				textFieldMostrador1.setText("");
+				textFieldMostrador2.setText("");
+				textFieldPuerta.setText("");
+				datePicker.setDate(null);
+				
+				//Recargar la tabla:
+				model.setRowCount(0);
+				List<Avion> aviones = avionDAO.selectAllAvion();
+				
+				for(Avion avioncito: aviones) {
+					String mostradoresUnidos = avioncito.getMostrador1() + "-" + avioncito.getMostrador2();
+					Object []row= {
+					    avioncito.getId(),
+					    avioncito.getHora(),
+					    avioncito.getVuelo(),
+					    avioncito.getDestino(),
+					    mostradoresUnidos,
+					    avioncito.getPuerta(),
+					    avioncito.getFecha()
+					};
+					model.addRow(row);
+				}
+				table.setModel(model);
+        	}
+        });
+        btnBorrar.setBounds(425, 284, 127, 23);
+        frame.getContentPane().add(btnBorrar);
+        
+        
 		
 	}
 }
